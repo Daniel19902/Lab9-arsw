@@ -13,6 +13,7 @@ En este repositorio se encuentra una aplicación SpringBoot que está configurad
 
 ![](https://docs.spring.io/spring/docs/current/spring-framework-reference/images/message-flow-simple-broker.png)
 
+
 En este caso, el manejador de mensajes asociado a "/app" aún no está configurado, pero sí lo está el broker '/topic'. Como mensaje, se usarán puntos, pues se espera que esta aplicación permita progragar eventos de dibujo de puntos generados por los diferentes clientes.
 
 ## Parte I.
@@ -25,29 +26,33 @@ Para esto, realice lo siguiente:
 
 1. Haga que la aplicación HTML5/JS al ingresarle en los campos de X y Y, además de graficarlos, los publique en el tópico: /topic/newpoint . Para esto tenga en cuenta (1) usar el cliente STOMP creado en el módulo de JavaScript y (2) enviar la representación textual del objeto JSON (usar JSON.stringify). Por ejemplo:
 
-	```javascript
-	//creando un objeto literal
-	stompClient.send("/topic/newpoint", {}, JSON.stringify({x:10,y:10}));
-	```
+    ```javascript
+    //creando un objeto literal
+    stompClient.send("/topic/newpoint", {}, JSON.stringify({x:10,y:10}));
+    ```
 
-	```javascript
-	//enviando un objeto creado a partir de una clase
-	stompClient.send("/topic/newpoint", {}, JSON.stringify(pt)); 
-	```
+    ```javascript
+    //enviando un objeto creado a partir de una clase
+    stompClient.send("/topic/newpoint", {}, JSON.stringify(pt)); 
+    ```
+   ![](img/punto1.PNG)
 
 2. Dentro del módulo JavaScript modifique la función de conexión/suscripción al WebSocket, para que la aplicación se suscriba al tópico "/topic/newpoint" (en lugar del tópico /TOPICOXX). Asocie como 'callback' de este suscriptor una función que muestre en un mensaje de alerta (alert()) el evento recibido. Como se sabe que en el tópico indicado se publicarán sólo puntos, extraiga el contenido enviado con el evento (objeto JavaScript en versión de texto), conviértalo en objeto JSON, y extraiga de éste sus propiedades (coordenadas X y Y). Para extraer el contenido del evento use la propiedad 'body' del mismo, y para convertirlo en objeto, use JSON.parse. Por ejemplo:
 
-	```javascript
-	var theObject=JSON.parse(message.body);
-	```
+    ```javascript
+    var theObject=JSON.parse(message.body);
+    ```
+   ![](img/punto2.PNG)
 3. Compile y ejecute su aplicación. Abra la aplicación en varias pestañas diferentes (para evitar problemas con el caché del navegador, use el modo 'incógnito' en cada prueba).
+	![](img/punto3.PNG)
 4. Ingrese los datos, ejecute la acción del botón, y verifique que en todas la pestañas se haya lanzado la alerta con los datos ingresados.
-
+	![](img/punto4.PNG)
 5. Haga commit de lo realizado, para demarcar el avance de la parte 2.
 
-	```bash
-	git commit -m "PARTE 1".
-	```
+    ```bash
+    git commit -m "PARTE 1".
+    ```
+ 
 
 
 ## Parte II.
@@ -55,13 +60,14 @@ Para esto, realice lo siguiente:
 Para hacer mas útil la aplicación, en lugar de capturar las coordenadas con campos de formulario, las va a capturar a través de eventos sobre un elemento de tipo \<canvas>. De la misma manera, en lugar de simplemente mostrar las coordenadas enviadas en los eventos a través de 'alertas', va a dibujar dichos puntos en el mismo canvas. Haga uso del mecanismo de captura de eventos de mouse/táctil usado en ejercicios anteriores con este fin.
 
 1. Haga que el 'callback' asociado al tópico /topic/newpoint en lugar de mostrar una alerta, dibuje un punto en el canvas en las coordenadas enviadas con los eventos recibidos. Para esto puede [dibujar un círculo de radio 1](http://www.w3schools.com/html/html5_canvas.asp).
-4. Ejecute su aplicación en varios navegadores (y si puede en varios computadores, accediendo a la aplicación mendiante la IP donde corre el servidor). Compruebe que a medida que se dibuja un punto, el mismo es replicado en todas las instancias abiertas de la aplicación.
+	![](img/punto5.PNG)
+2. Ejecute su aplicación en varios navegadores (y si puede en varios computadores, accediendo a la aplicación mendiante la IP donde corre el servidor). Compruebe que a medida que se dibuja un punto, el mismo es replicado en todas las instancias abiertas de la aplicación.
+	![](img/punto6.PNG)
+3. Haga commit de lo realizado, para marcar el avance de la parte 2.
 
-5. Haga commit de lo realizado, para marcar el avance de la parte 2.
-
-	```bash
-	git commit -m "PARTE 2".
-	```
+    ```bash
+    git commit -m "PARTE 2".
+    ```
 
 ## Parte III.
 

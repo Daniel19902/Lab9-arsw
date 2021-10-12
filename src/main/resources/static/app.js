@@ -8,6 +8,7 @@ var app = (function () {
     }
     
     var stompClient = null;
+    let identificador = 0;
 
     var addPointToCanvas = function (point) {        
         var canvas = document.getElementById("canvas");
@@ -35,12 +36,12 @@ var app = (function () {
         //subscribe to /topic/TOPICXX when connections succeed
         stompClient.connect({}, function (frame) {
             console.log('Connected: ' + frame);
+            //console.log('/topic/newpoint.'+identificador);
             stompClient.subscribe('/topic/newpoint', function (eventbody) {
                 var theObject=JSON.parse(eventbody.body);
-                alert("conectado mi perro"+theObject.x+","+theObject.y);
+                addPointToCanvas(theObject);
             });
         });
-
     };
     
     
@@ -49,9 +50,11 @@ var app = (function () {
 
         init: function () {
             var can = document.getElementById("canvas");
+            //identificador = $('#id').val();
+            //console.log(identificador);
+            connectAndSubscribe();
             
             //websocket connection
-            connectAndSubscribe();
         },
 
         publishPoint: function(px,py){
